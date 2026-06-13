@@ -248,12 +248,30 @@ export default function AdminConsole({ accessToken, adminEmail }: AdminConsolePr
 
     setErrorText("");
     try {
-      // Loop and delete
-      for (const p of participants) {
-        await deleteDoc(doc(db, "participants", p.id));
+      if (participants.length === 0) {
+        // Nothing in local list, but still reset config in case it has stale finalScoreboard data
+        await setDoc(doc(db, "gameState", "config"), {
+          finalScoreboard: [],
+          gameActive: false,
+          gameEnded: false,
+          startedAt: null,
+          updatedAt: new Date().toISOString()
+        }, { merge: true });
+        alert("Scoreboard was already empty. Game state reset to standby.");
+        return;
       }
-      
-      // Also clear finalScoreboard from gameState config and reset game states
+
+      // Attempt to delete every participant doc, even if some individually fail.
+      // (Sequential awaits in a single try/catch would abort on the FIRST failure,
+      // leaving every doc after it un-deleted — which is why old rows kept showing up.)
+      const results = await Promise.allSettled(
+        participants.map((p) => deleteDoc(doc(db, "participants", p.id)))
+      );
+
+      const failed = results.filter((r) => r.status === "rejected") as PromiseRejectedResult[];
+      const succeededCount = results.length - failed.length;
+
+      // Always reset game state, regardless of partial failures above
       await setDoc(doc(db, "gameState", "config"), {
         finalScoreboard: [],
         gameActive: false,
@@ -262,7 +280,22 @@ export default function AdminConsole({ accessToken, adminEmail }: AdminConsolePr
         updatedAt: new Date().toISOString()
       }, { merge: true });
 
-      alert("Purged scoreboard databases successfully.");
+      // Force an immediate re-fetch so the table reflects reality right away
+      await fetchParticipantsOnDemand();
+
+      if (failed.length > 0) {
+        const sampleMsg = (failed[0].reason && failed[0].reason.message) || String(failed[0].reason);
+        const isPermissionIssue = /permission|insufficient/i.test(sampleMsg);
+        setErrorText(
+          `Purged ${succeededCount}/${results.length} records. ${failed.length} record(s) could not be deleted` +
+          (isPermissionIssue
+            ? " — this looks like a Firestore security rules issue: the admin account does not have 'delete' permission on other users' participant documents. Update your Firestore rules to allow deletes from the admin email on the 'participants' collection."
+            : `: ${sampleMsg}`)
+        );
+        alert(`Purge partially completed: ${succeededCount}/${results.length} records deleted. See the error panel for details.`);
+      } else {
+        alert("Purged scoreboard databases successfully.");
+      }
     } catch (err: any) {
       setErrorText("Scoreboard purge error: " + err.message);
     }
