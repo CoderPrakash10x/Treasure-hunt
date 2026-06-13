@@ -12,6 +12,7 @@ interface ParticipantData {
   registrationId?: string;
   college?: string;
   clearedLevels: number;
+  currentLevelIndex?: number;
   timeTaken: number;
   hintsRemaining: number;
   finalTime: number;
@@ -545,6 +546,7 @@ export default function AdminConsole({ accessToken, adminEmail }: AdminConsolePr
                 <th className="p-3">Code Name</th>
                 <th className="p-3 select-all">Email</th>
                 <th className="p-3 text-center">Cleared</th>
+                <th className="p-3 text-center">Currently On</th>
                 <th className="p-3 text-right">Elapsed</th>
                 <th className="p-3 text-center">Hints Lft</th>
                 <th className="p-3 text-right text-coral font-bold">Final Time Score</th>
@@ -565,6 +567,11 @@ export default function AdminConsole({ accessToken, adminEmail }: AdminConsolePr
                   </td>
                   <td className="p-3 text-white/50 text-[10px] break-all">{p.email}</td>
                   <td className="p-3 font-bold text-center text-purple-400">{p.clearedLevels} / {STAGES_DATA.length}</td>
+                  <td className="p-3 font-bold text-center text-cyan-300">
+                    {p.gameCompleted
+                      ? "DONE"
+                      : `Lvl ${Math.min((p.currentLevelIndex ?? p.clearedLevels) + 1, STAGES_DATA.length)}`}
+                  </td>
                   <td className="p-3 text-right text-white/60">{Math.round(p.timeTaken)}s</td>
                   <td className="p-3 text-center text-cyan-400">{p.hintsRemaining}</td>
                   <td className="p-3 text-right text-coral font-black">{Math.round(p.finalTime)}s</td>
