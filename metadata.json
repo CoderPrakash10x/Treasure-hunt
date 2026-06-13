@@ -1,0 +1,6 @@
+{
+  "name": "IGNITIA NEXUS - Treasure Hunt",
+  "description": "An interactive tech-themed treasure hunt organized by Evolvera Club, featuring cryptographic riddle-solving and procedural mini-games.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

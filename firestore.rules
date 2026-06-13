@@ -1,0 +1,76 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // 1. Catch-all default deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // --- HELPER FUNCTIONS ---
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && 
+             request.auth.token.email == 'aniketjaiswal621@gmail.com' && 
+             request.auth.token.email_verified == true;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    // --- STRUCTURAL ENFORCEMENT BLUEPRINTS ---
+    function isValidGameState(data) {
+      return data.gameActive is bool &&
+             (data.get('startedAt', null) == null || data.get('startedAt', null) is int) &&
+             (data.get('gameEnded', false) is bool) &&
+             (data.get('finalScoreboard', []) is list) &&
+             (data.get('updatedAt', '') is string);
+    }
+
+    function isValidParticipant(data) {
+      return data.userId is string && data.userId.size() <= 128 &&
+             data.name is string && data.name.size() <= 100 &&
+             data.email is string && data.email.size() <= 200 &&
+             data.clearedLevels is int && data.clearedLevels >= 0 && data.clearedLevels <= 12 &&
+             data.timeTaken is int && data.timeTaken >= 0 &&
+             data.hintsRemaining is int && data.hintsRemaining >= 0 && data.hintsRemaining <= 5 &&
+             data.finalTime is int &&
+             data.gameCompleted is bool &&
+             data.get('registrationId', '') is string && data.get('registrationId', '').size() <= 200 &&
+             data.get('college', '') is string && data.get('college', '').size() <= 200;
+    }
+
+    // --- PATH-MATCH MODULE — GAME STATE ---
+    match /gameState/{docId} {
+      allow read: if true;
+      allow write: if isAdmin() && isValidGameState(request.resource.data);
+    }
+
+    // --- PATH-MATCH MODULE — PARTICIPANTS ---
+    match /participants/{participantId} {
+      allow get: if isOwner(participantId) || isAdmin();
+      allow list: if isAdmin();
+      allow create: if isSignedIn() && 
+                    isOwner(participantId) && 
+                    isValidParticipant(request.resource.data) && 
+                    request.resource.data.userId == request.auth.uid;
+      allow update: if isSignedIn() && (
+        isAdmin() || (
+          isOwner(participantId) &&
+          isValidParticipant(request.resource.data) &&
+          request.resource.data.userId == resource.data.userId &&
+          request.resource.data.get('email', '') == resource.data.get('email', '') &&
+          request.resource.data.get('name', '') == resource.data.get('name', '')
+        )
+      );
+      allow delete: if isAdmin();
+    }
+  }
+}

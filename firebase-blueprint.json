@@ -1,0 +1,88 @@
+{
+  "entities": {
+    "GameStateGlobal": {
+      "title": "GameStateGlobal",
+      "description": "Global event control state managed by administrators.",
+      "type": "object",
+      "properties": {
+        "gameActive": {
+          "type": "boolean",
+          "description": "Indicates whether the game is started by the admin."
+        },
+        "startedAt": {
+          "type": "integer",
+          "description": "Timestamp when the event went live (in epoch milliseconds)."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Last update server timestamp"
+        }
+      },
+      "required": ["gameActive", "startedAt"]
+    },
+    "Participant": {
+      "title": "Participant",
+      "description": "Records and stats for an active competitor/participant.",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "Unique user ID of the participant"
+        },
+        "name": {
+          "type": "string",
+          "description": "Code Name or Display Name of the competitor"
+        },
+        "email": {
+          "type": "string",
+          "description": "Authenticated user email address"
+        },
+        "registrationId": {
+          "type": "string",
+          "description": "Official college registration / student ID number"
+        },
+        "college": {
+          "type": "string",
+          "description": "College or University name of the operator"
+        },
+        "clearedLevels": {
+          "type": "integer",
+          "description": "Total number of levels successfully completed (0 to 12)"
+        },
+        "timeTaken": {
+          "type": "integer",
+          "description": "Total active seconds or milliseconds spent on solving tasks"
+        },
+        "hintsRemaining": {
+          "type": "integer",
+          "description": "Remaining hints remaining from the 5 starting hints."
+        },
+        "finalTime": {
+          "type": "integer",
+          "description": "Score computed as: timeTaken - hintsRemaining * 10 (or equivalent adjusted final time)."
+        },
+        "gameCompleted": {
+          "type": "boolean",
+          "description": "Whether the participant completed level 12"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp of player stats sync"
+        }
+      },
+      "required": ["userId", "name", "email", "clearedLevels", "timeTaken", "hintsRemaining", "finalTime", "gameCompleted"]
+    }
+  },
+  "firestore": {
+    "/gameState/{docId}": {
+      "schema": "GameStateGlobal",
+      "description": "Global settings path for activation states of the event."
+    },
+    "/participants/{participantId}": {
+      "schema": "Participant",
+      "description": "Records participant progress and scores."
+    }
+  }
+}
