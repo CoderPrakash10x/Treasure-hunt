@@ -1506,26 +1506,11 @@ export default function App() {
 
                           {/* If level 8 or 12 is active, show the Wikipedia link tool */}
                           {(currentLevel.id === 8) && (
-                            <div className="bg-[#050b18] border border-white/5 p-4 rounded-xl flex flex-col md:flex-row items-center justify-between gap-4">
-                              <div className="space-y-1">
-                                <div className="text-[10px] font-mono text-coral uppercase tracking-widest">Active Wikipedia Launcher</div>
-                                <h4 className="text-sm font-bold text-slate-200">Hyperlink Ladder Mission</h4>
-                                <p className="text-xs text-slate-400 max-w-sm">
-                                  Use only highlighted hyperlinks within standard articles. Start on the "Coffee" directory, redirect to "Germany".
-                                </p>
-                              </div>
-                              <a
-                                id="wikipedia-launcher-link"
-                                href={currentLevel.taskUrl}
-                                target="_blank"
-                                rel="noreferrer"
-                                onClick={handleNavClick}
-                                className="px-5 py-3 rounded-xl bg-[#0c1425] border border-coral/35 text-coral hover:text-coral hover:bg-coral/5 font-mono text-xs font-bold transition-all flex items-center justify-center gap-2 select-none self-stretch md:self-auto cursor-pointer"
-                              >
-                                <ExternalLink className="w-4 h-4" />
-                                <span>Access Wikipedia Link</span>
-                              </a>
-                            </div>
+                            <div>
+                          {answerState !== "correct" ? (
+                            <UrlManipulatorChallenge onSuccess={handleUrlChallengeSuccess} />
+                          ) : null}
+                        </div>
                           )}
 
                           {/* Default Text Input Submission Interface */}
@@ -1627,12 +1612,28 @@ export default function App() {
 
                       ) : currentLevel.id === 11 ? (
                         
-                        /* --- STAGE 2 - Level 11: URL Manipulator Challenge --- */
-                        <div>
-                          {answerState !== "correct" ? (
-                            <UrlManipulatorChallenge onSuccess={handleUrlChallengeSuccess} />
-                          ) : null}
-                        </div>
+                        /* --- STAGE 2 - Level 11: URL Manipulator Challenge --- */                       
+
+                         <div className="bg-[#050b18] border border-white/5 p-4 rounded-xl flex flex-col md:flex-row items-center justify-between gap-4">
+                              <div className="space-y-1">
+                                <div className="text-[10px] font-mono text-coral uppercase tracking-widest">Active Wikipedia Launcher</div>
+                                <h4 className="text-sm font-bold text-slate-200">Hyperlink Ladder Mission</h4>
+                                <p className="text-xs text-slate-400 max-w-sm">
+                                  Use only highlighted hyperlinks within standard articles. Start on the "Coffee" directory, redirect to "Germany".
+                                </p>
+                              </div>
+                              <a
+                                id="wikipedia-launcher-link"
+                                href={currentLevel.taskUrl}
+                                target="_blank"
+                                rel="noreferrer"
+                                onClick={handleNavClick}
+                                className="px-5 py-3 rounded-xl bg-[#0c1425] border border-coral/35 text-coral hover:text-coral hover:bg-coral/5 font-mono text-xs font-bold transition-all flex items-center justify-center gap-2 select-none self-stretch md:self-auto cursor-pointer"
+                              >
+                                <ExternalLink className="w-4 h-4" />
+                                <span>Access Wikipedia Link</span>
+                              </a>
+                            </div>
 
                       ) : (
                         
