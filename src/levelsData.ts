@@ -67,11 +67,21 @@ export const STAGES_DATA: Level[] = [
   },
   {
     id: 8,
-    name: "Level 11: The URL Manipulator",
+    name: "Level 8: The Wikipedia Ladder Hunt",
     stage: 2,
-    riddle: "You have reached a restricted security gateway. The standard interface elements are completely locked down. To navigate into the hidden system folder, you must interact directly with the directory routing architecture yourself.",
-    hint: "Look closely at the 403 error text. It tells you exactly which year group path folder you need to target, and you will need to switch out your limited 'guest' viewing access parameter for 'admin' privileges.",
-    tip: "Interacting directly with URL patterns and directory endpoints is a fundamental skill in cyber security analysis and web parameter exploration."
+    riddle: "Go to the Wikipedia page for 'Coffee'. Your mission is to navigate entirely through the article hyperlinks—without using the search bar or ctrl+F —Your goal is to Find the total population of the Germany",
+    hint: "Look at the right-side summary infobox panel on the target 'Germany' page to identify the current total population estimation value.",
+    taskUrl: "https://en.wikipedia.org/wiki/Coffee",
+    acceptedAnswers: [
+      "82 million",
+      "82 millions",
+      "82m",
+      "82 m",
+      "82,000,000",
+      "82000000",
+      "eighty two million"
+    ],
+    tip: "The Wikipedia Ladder Hunt challenges your contextual mapping skills, forcing you to find logical semantic bridges between entirely unrelated topics like agriculture and demographics."
   },
   {
     id: 9,
@@ -91,21 +101,11 @@ export const STAGES_DATA: Level[] = [
   },
   {
     id: 11,
-    name: "Level 8: The Wikipedia Ladder Hunt",
+    name: "Level 11: The URL Manipulator",
     stage: 2,
-    riddle: "Go to the Wikipedia page for 'Coffee'. Your mission is to navigate entirely through the article hyperlinks—without using the search bar or ctrl+F —Your goal is to Find the total population of the Germany",
-    hint: "Look at the right-side summary infobox panel on the target 'Germany' page to identify the current total population estimation value.",
-    taskUrl: "https://en.wikipedia.org/wiki/Coffee",
-    acceptedAnswers: [
-      "82 million",
-      "82 millions",
-      "82m",
-      "82 m",
-      "82,000,000",
-      "82000000",
-      "eighty two million"
-    ],
-    tip: "The Wikipedia Ladder Hunt challenges your contextual mapping skills, forcing you to find logical semantic bridges between entirely unrelated topics like agriculture and demographics."
+    riddle: "You have reached a restricted security gateway. The standard interface elements are completely locked down. To navigate into the hidden system folder, you must interact directly with the directory routing architecture yourself.",
+    hint: "Look closely at the 403 error text. It tells you exactly which year group path folder you need to target, and you will need to switch out your limited 'guest' viewing access parameter for 'admin' privileges.",
+    tip: "Interacting directly with URL patterns and directory endpoints is a fundamental skill in cyber security analysis and web parameter exploration."
   },
   {
     id: 12,
