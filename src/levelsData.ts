@@ -12,7 +12,7 @@ export const STAGES_DATA: Level[] = [
     tip: "A USB flash drive is a portable storage device that lets you easily carry and transfer files between different computers."
   },
   {
-    id: 4,
+    id: 2,
     name: "Level 2: The Biological Lock",
     stage: 2,
     riddle: "I don't use a key and I don't use a code,\nTo let you inside of your digital abode.\nJust give me a touch or look straight in my eye,\nI know who you are, so no stranger can pry.",
@@ -30,7 +30,7 @@ export const STAGES_DATA: Level[] = [
     tip: "Each term is the product of two consecutive numbers: n × (n + 1). So after 6 × 7 = 42 comes 7 × 8 = 56."
   },
   {
-    id: 2,
+    id: 4,
     name: "Level 4: Keypad Cipher Decryption",
     stage: 1,
     riddle: "An old-school SMS text message was intercepted. Decode this sequence using a standard phone dialer pad mapping sequence (where 2=ABC, 3=DEF, 4=GHI...):\n\n33 - 888 - 666 - 555 - 888 - 33 - 777 - 2",
