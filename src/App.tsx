@@ -108,7 +108,6 @@ export default function App() {
   const [scoreboard, setScoreboard] = useState<any[]>([]);
   const [isSyncing, setIsSyncing] = useState<boolean>(false);
   const [syncSuccess, setSyncSuccess] = useState<boolean>(false);
-  const [isLoggingOut, setIsLoggingOut] = useState<boolean>(false);
 
   // Competitor registration state values
   const [registrantName, setRegistrantName] = useState<string>(() => {
@@ -150,11 +149,8 @@ export default function App() {
           setScoreboard([]);
         }
 
-        // Under TRUE standby lock (game never started yet), reset any leftover
-        // test progress so player starts at Level 1 on "Live" signal.
-        // IMPORTANT: do NOT reset on PAUSE — pause also sets gameActive=false
-        // but keeps `startedAt` set, so we must check !data.startedAt too.
-        if (!active && !ended && !data.startedAt && currentLevelIndex > 0) {
+        // Under standby lock, reset any leftover test progress so player starts at Level 1 on "Live" signal
+        if (!active && !ended && currentLevelIndex > 0) {
           handleRestartGameLocal();
         }
       }
@@ -210,7 +206,6 @@ export default function App() {
   };
 
   const handleLogout = async () => {
-    setIsLoggingOut(true);
     try {
       // 1. Save state to Firestore first before clearing local state or logging out
       if (user && user.email !== "icoder.prakash@gmail.com") {
@@ -236,23 +231,27 @@ export default function App() {
         console.log("Logged latest checkpoint to database prior to logout sequence.");
       }
 
-      // 2. Sign out of Firebase auth completely
-      await logout();
-
-      // 3. Wipe all local persisted game/session state
+      // 2. Clear local states
+      setCurrentLevelIndex(0);
+      setRevealedHints({});
+      setHintsRemaining(5);
+      setCompletedLevels({});
+      setGameCompleted(false);
+      setUserAnswer("");
+      setAnswerState("idle");
+      setSubmittedAnswer("");
+      setTimeTaken(0);
+      localStorage.setItem("treasure_time_taken", "0");
       localStorage.clear();
 
-      // 4. Force a full, clean reload of the app so React state, Firestore
-      //    subscriptions, and the intro/login overlay all reinitialize fresh.
-      //    This avoids stale-state edge cases where the gameplay screen
-      //    remains visible after logging out.
-      window.location.replace(window.location.origin + window.location.pathname);
+      // 3. Perform Sign Out elements
+      await logout();
+      setUser(null);
+      setAccessToken(null);
+      setShowIntro(true);
+      localStorage.removeItem("ignitia_nexus_intro_completed");
     } catch (err) {
       console.error("Logout failed:", err);
-      // Even if something failed mid-way, force a reload so the user isn't
-      // left stuck on a stale authenticated screen.
-      localStorage.clear();
-      window.location.replace(window.location.origin + window.location.pathname);
     }
   };
 
@@ -819,25 +818,7 @@ export default function App() {
 
   return (
     <div id="app-root-container" className="min-h-screen bg-[#050b18] text-white flex flex-col justify-between font-sans selection:bg-coral selection:text-slate-950 antialiased relative overflow-hidden">
-
-      {/* Logging Out Overlay - shown while session is being wiped and the app reloads */}
-      {isLoggingOut && (
-        <div id="logout-overlay" className="fixed inset-0 bg-[#050b18]/98 z-[999999] backdrop-blur-md flex flex-col items-center justify-center font-mono text-center px-4 select-none">
-          <div className="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.03),rgba(0,255,0,0.01),rgba(0,0,255,0.03))] bg-[size:100%_4px,6px_100%] pointer-events-none opacity-40" />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] bg-coral/5 rounded-full blur-[80px] pointer-events-none" />
-
-          <div className="relative flex flex-col items-center max-w-sm">
-            <RefreshCw className="w-10 h-10 text-coral animate-spin mb-4" />
-            <div className="text-coral text-sm font-bold uppercase tracking-[0.2em] animate-pulse">
-              [ TERMINATING SESSION... ]
-            </div>
-            <div className="text-slate-500 text-[10px] uppercase tracking-widest mt-2 leading-relaxed">
-              Wiping local cache and resetting terminal to standby. Redirecting to login...
-            </div>
-          </div>
-        </div>
-      )}
-
+      
       {/* Database State Restoration Loader */}
       {!!user && user.email !== "icoder.prakash@gmail.com" && !hasLoadedDbState && (
         <div id="db-state-restoration-loader" className="fixed inset-0 bg-[#050b18]/97 z-[99999] backdrop-blur-md flex flex-col items-center justify-center font-mono text-center px-4 select-none">
@@ -1482,7 +1463,7 @@ export default function App() {
                     <div id="interactive-challenge-station" className="p-1">
                       
                       {/* STAGE 1 OR STAGE 2 GENERIC RIDDLES */}
-                      {currentLevel.id !== 9 && currentLevel.id !== 10 && currentLevel.id !== 11 && currentLevel.id !== 12 ? (
+                      {currentLevel.id !== 9 && currentLevel.id !== 10 && currentLevel.id !== 8 && currentLevel.id !== 12 ? (
                         <div className="space-y-6">
                            
                            {/* If level 4 is active, render phone keypad accessory if hint revealed */}
@@ -1505,12 +1486,27 @@ export default function App() {
                           )}
 
                           {/* If level 8 or 12 is active, show the Wikipedia link tool */}
-                          {(currentLevel.id === 8) && (
-                            <div>
-                          {answerState !== "correct" ? (
-                            <UrlManipulatorChallenge onSuccess={handleUrlChallengeSuccess} />
-                          ) : null}
-                        </div>
+                          {(currentLevel.id === 11) && (
+                            <div className="bg-[#050b18] border border-white/5 p-4 rounded-xl flex flex-col md:flex-row items-center justify-between gap-4">
+                              <div className="space-y-1">
+                                <div className="text-[10px] font-mono text-coral uppercase tracking-widest">Active Wikipedia Launcher</div>
+                                <h4 className="text-sm font-bold text-slate-200">Hyperlink Ladder Mission</h4>
+                                <p className="text-xs text-slate-400 max-w-sm">
+                                  Use only highlighted hyperlinks within standard articles. Start on the "Coffee" directory, redirect to "Germany".
+                                </p>
+                              </div>
+                              <a
+                                id="wikipedia-launcher-link"
+                                href={currentLevel.taskUrl}
+                                target="_blank"
+                                rel="noreferrer"
+                                onClick={handleNavClick}
+                                className="px-5 py-3 rounded-xl bg-[#0c1425] border border-coral/35 text-coral hover:text-coral hover:bg-coral/5 font-mono text-xs font-bold transition-all flex items-center justify-center gap-2 select-none self-stretch md:self-auto cursor-pointer"
+                              >
+                                <ExternalLink className="w-4 h-4" />
+                                <span>Access Wikipedia Link</span>
+                              </a>
+                            </div>
                           )}
 
                           {/* Default Text Input Submission Interface */}
@@ -1532,7 +1528,7 @@ export default function App() {
                                     setUserAnswer(e.target.value);
                                   }}
                                   placeholder={
-                                    currentLevel.id === 8 
+                                    currentLevel.id === 11 
                                       ? "Type target country population..." 
                                       : currentLevel.id === 4 
                                         ? "Type decoded word sequence..." 
@@ -1610,30 +1606,14 @@ export default function App() {
                           ) : null}
                         </div>
 
-                      ) : currentLevel.id === 11 ? (
+                      ) : currentLevel.id === 8 ? (
                         
-                        /* --- STAGE 2 - Level 11: URL Manipulator Challenge --- */                       
-
-                         <div className="bg-[#050b18] border border-white/5 p-4 rounded-xl flex flex-col md:flex-row items-center justify-between gap-4">
-                              <div className="space-y-1">
-                                <div className="text-[10px] font-mono text-coral uppercase tracking-widest">Active Wikipedia Launcher</div>
-                                <h4 className="text-sm font-bold text-slate-200">Hyperlink Ladder Mission</h4>
-                                <p className="text-xs text-slate-400 max-w-sm">
-                                  Use only highlighted hyperlinks within standard articles. Start on the "Coffee" directory, redirect to "Germany".
-                                </p>
-                              </div>
-                              <a
-                                id="wikipedia-launcher-link"
-                                href={currentLevel.taskUrl}
-                                target="_blank"
-                                rel="noreferrer"
-                                onClick={handleNavClick}
-                                className="px-5 py-3 rounded-xl bg-[#0c1425] border border-coral/35 text-coral hover:text-coral hover:bg-coral/5 font-mono text-xs font-bold transition-all flex items-center justify-center gap-2 select-none self-stretch md:self-auto cursor-pointer"
-                              >
-                                <ExternalLink className="w-4 h-4" />
-                                <span>Access Wikipedia Link</span>
-                              </a>
-                            </div>
+                        /* --- STAGE 2 - Level 11: URL Manipulator Challenge --- */
+                        <div>
+                          {answerState !== "correct" ? (
+                            <UrlManipulatorChallenge onSuccess={handleUrlChallengeSuccess} />
+                          ) : null}
+                        </div>
 
                       ) : (
                         
