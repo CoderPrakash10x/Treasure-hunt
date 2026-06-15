@@ -11,7 +11,7 @@ interface ReflexMatrixChallengeProps {
   onSuccess: () => void;
 }
 
-const TIME_LIMIT = 12.0;
+const TIME_LIMIT = 15.0;
 
 export default function ReflexMatrixChallenge({ onSuccess }: ReflexMatrixChallengeProps) {
   const [numbers, setNumbers] = useState<Cell[]>([]);
