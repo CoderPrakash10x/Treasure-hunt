@@ -4,12 +4,12 @@ export const STAGES_DATA: Level[] = [
   // --- STAGE 1 (Riddles & Text Answers) ---
   {
     id: 1,
-    name: "Level 1: The Cosmic Navigator",
+    name: "Level 2: The Memory Vault",
     stage: 1,
-    riddle: "I track you wherever you wander and roam,\nHelping you find the best pathway back home.\nI look at the stars (satellites) to tell where you stand,\nHolding the map of the world in your hand.",
-    hint: "It’s the app you open when you are lost in a new city or need to check how many minutes away your food delivery rider is.",
-    acceptedAnswers: ["google map", "google maps", "gps", "googlemap", "googlemaps"],
-    tip: "GPS uses a constellation of global satellites to calculate your precise coordinates anywhere on Earth."
+    riddle: "I am tiny but I can store photos, homework and videos.\nYou plug me into a computer and I carry your files everywhere.\n\nWhat am I?",
+    hint: "It is also called a thumb drive.",
+    acceptedAnswers: ["usb", "usb drive", "pen drive", "pendrive", "flash drive", "thumb drive"],
+    tip: "A USB flash drive is a portable storage device that lets you easily carry and transfer files between different computers."
   },
   {
     id: 2,
@@ -22,12 +22,12 @@ export const STAGES_DATA: Level[] = [
   },
   {
     id: 3,
-    name: "Level 3: The Secret Vault Keeper",
+    name: "Level 3: The Nexus Core",
     stage: 1,
-    riddle: "I am a secret you keep in your head,\nWithout me, your profile and banking are dead.\nI protect all your data from eyes that might pry,\nBut if you forget me, you're locked out. Goodbye!",
-    hint: "You have to type this in every time you log into your portal, and it usually requires at least one capital letter, a number, and an '@' or '#'.",
-    acceptedAnswers: ["password", "pin", "code", "pass code", "passphrase", "pass phrase"],
-    tip: "Strong passwords keep modern digital environments safe."
+    riddle: "Complete the sequence:\n\n2, 6, 12, 20, 30, 42, ___",
+    hint: "Notice the pattern: 1×2, 2×3, 3×4...",
+    acceptedAnswers: ["56"],
+    tip: "Each term is the product of two consecutive numbers: n × (n + 1). So after 6 × 7 = 42 comes 7 × 8 = 56."
   },
   {
     id: 4,
@@ -73,12 +73,12 @@ export const STAGES_DATA: Level[] = [
     hint: "Look at the right-side summary infobox panel on the target 'Germany' page to identify the current total population estimation value.",
     taskUrl: "https://en.wikipedia.org/wiki/Coffee",
     acceptedAnswers: [
-      "82 million", 
-      "82 millions", 
-      "82m", 
-      "82 m", 
-      "82,000,000", 
-      "82000000", 
+      "82 million",
+      "82 millions",
+      "82m",
+      "82 m",
+      "82,000,000",
+      "82000000",
       "eighty two million"
     ],
     tip: "The Wikipedia Ladder Hunt challenges your contextual mapping skills, forcing you to find logical semantic bridges between entirely unrelated topics like agriculture and demographics."
