@@ -254,7 +254,7 @@ export default function MatrixIntroOverlay({
   }, []);
 
   const handleSubmitRegistration = () => {
-    const isUserAdmin = user?.email === "icoder.prakash@gmail.com";
+    const isUserAdmin = user?.email === import.meta.env.VITE_ADMIN_EMAIL;
     if (isUserAdmin) {
       playClickSound();
       setIsInitialized(true);
@@ -328,7 +328,7 @@ export default function MatrixIntroOverlay({
     ? "border-purple-500/40 shadow-[0_0_40px_rgba(168,85,247,0.15)]"
     : "border-[#1e293b]/80 shadow-[0_0_30px_rgba(0,0,0,0.5)]";
 
-  const isAdmin = user?.email === "icoder.prakash@gmail.com";
+  const isAdmin = user?.email === import.meta.env.VITE_ADMIN_EMAIL;
 
   return (
     <div

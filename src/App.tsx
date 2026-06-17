@@ -208,7 +208,7 @@ export default function App() {
   const handleLogout = async () => {
     try {
       // 1. Save state to Firestore first before clearing local state or logging out
-      if (user && user.email !== "icoder.prakash@gmail.com") {
+      if (user && user.email !== import.meta.env.VITE_ADMIN_EMAIL) {
         const pDocRef = doc(db, "participants", user.uid);
         const calculatedScoreTime = Math.max(0, timeTakenRef.current - hintsRemaining * 10);
         const actualClearedLevels = Object.values(completedLevels).filter(Boolean).length;
@@ -256,7 +256,7 @@ export default function App() {
   };
 
   const handleManualSync = async () => {
-    if (!user || user.email === "icoder.prakash@gmail.com") return;
+    if (!user || user.email === import.meta.env.VITE_ADMIN_EMAIL) return;
     setIsSyncing(true);
     setSyncSuccess(false);
     try {
@@ -291,7 +291,7 @@ export default function App() {
 
   // Retrieve saved state from Firestore if available
   useEffect(() => {
-    if (!user || user.email === "icoder.prakash@gmail.com") {
+    if (!user || user.email === import.meta.env.VITE_ADMIN_EMAIL) {
       setHasLoadedDbState(false);
       return;
     }
@@ -444,7 +444,7 @@ export default function App() {
 
   // Clock ticking interval
   useEffect(() => {
-    if (showIntro || !gameActive || gameEnded || gameCompleted || !user || user.email === "icoder.prakash@gmail.com" || !hasLoadedDbState) {
+    if (showIntro || !gameActive || gameEnded || gameCompleted || !user || user.email === import.meta.env.VITE_ADMIN_EMAIL || !hasLoadedDbState) {
       return;
     }
 
@@ -485,7 +485,7 @@ export default function App() {
 
   // Push player database stats inside a background sync hook on key-events!
   useEffect(() => {
-    if (!user || user.email === "icoder.prakash@gmail.com") return;
+    if (!user || user.email === import.meta.env.VITE_ADMIN_EMAIL) return;
 
     const syncPlayerStats = async () => {
       try {
@@ -711,7 +711,7 @@ export default function App() {
 
       // Immediately sync final completion state to Firestore directly
       // (cannot rely on useEffect here due to React state batching race condition)
-      if (user && user.email !== "icoder.prakash@gmail.com") {
+      if (user && user.email !== import.meta.env.VITE_ADMIN_EMAIL) {
         try {
           const pDocRef = doc(db, "participants", user.uid);
           const finalCompletedLevels = { ...completedLevels, [currentLevelIndex]: true };
@@ -820,7 +820,7 @@ export default function App() {
     <div id="app-root-container" className="min-h-screen bg-[#050b18] text-white flex flex-col justify-between font-sans selection:bg-coral selection:text-slate-950 antialiased relative overflow-hidden">
       
       {/* Database State Restoration Loader */}
-      {!!user && user.email !== "icoder.prakash@gmail.com" && !hasLoadedDbState && (
+      {!!user && user.email !== import.meta.env.VITE_ADMIN_EMAIL && !hasLoadedDbState && (
         <div id="db-state-restoration-loader" className="fixed inset-0 bg-[#050b18]/97 z-[99999] backdrop-blur-md flex flex-col items-center justify-center font-mono text-center px-4 select-none">
           {/* Scanlines and gradients matching the intro */}
           <div className="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.03),rgba(0,255,0,0.01),rgba(0,0,255,0.03))] bg-[size:100%_4px,6px_100%] pointer-events-none opacity-40" />
@@ -860,7 +860,7 @@ export default function App() {
       </AnimatePresence>
 
       {/* Waiting for Admin / Game Concluded Screen Overlay */}
-      {!gameActive && user && user.email !== "icoder.prakash@gmail.com" && (
+      {!gameActive && user && user.email !== import.meta.env.VITE_ADMIN_EMAIL && (
         <div 
           id="waiting-for-admin-overlay" 
           className="fixed inset-0 bg-[#050b18]/97 backdrop-blur-md z-[8000] flex flex-col items-center justify-center p-4 md:p-6 overflow-y-auto select-none"
@@ -1127,7 +1127,7 @@ export default function App() {
               <div className="flex items-center gap-2 bg-slate-950/80 border border-white/5 py-1.5 px-3 rounded-xl font-mono text-xs text-white/80">
                 <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 shadow-[0_0_5px_#10b981]" />
                 <span className="truncate max-w-[100px] font-semibold">{user.displayName}</span>
-                {user.email === "icoder.prakash@gmail.com" ? (
+                {user.email === import.meta.env.VITE_ADMIN_EMAIL ? (
                   <>
                     <span className="text-[9px] font-black uppercase text-coral bg-coral/10 border border-coral/30 px-1.5 rounded animate-pulse">
                       ADMIN
@@ -1143,7 +1143,7 @@ export default function App() {
               </div>
             )}
 
-            {user && user.email !== "icoder.prakash@gmail.com" && (
+            {user && user.email !== import.meta.env.VITE_ADMIN_EMAIL && (
               <button
                 onClick={handleManualSync}
                 disabled={isSyncing}
@@ -1179,7 +1179,7 @@ export default function App() {
             </button>
 
             {/* Global reset button - Only accessible to Admin */}
-            {user?.email === "icoder.prakash@gmail.com" && (
+            {user?.email === import.meta.env.VITE_ADMIN_EMAIL && (
               <button
                 id="restart-game-btn"
                 onClick={handleRestartGame}
@@ -1198,7 +1198,7 @@ export default function App() {
       <main id="main-content-stage" className="flex-grow max-w-6xl w-full mx-auto px-4 py-4 md:py-6 relative z-10">
         
         {/* Admin operations deck */}
-        {user?.email === "icoder.prakash@gmail.com" && (
+        {user?.email === import.meta.env.VITE_ADMIN_EMAIL && (
           <div className="mb-6">
             <AdminConsole accessToken={accessToken || ""} adminEmail={user.email} />
           </div>
